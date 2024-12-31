@@ -22,11 +22,9 @@ func (p *IntColumnParser) ParseColumn() (string, error) {
 	} else if code == STATIC {
 		return p.handleStatic()
 	} else if code == SEQ {
-		l := p.latest // get the latest
-		p.latest++    // increment
-		return strconv.Itoa(l), nil
+		return p.handleSeq()
 	} else if code == NULL {
-		return "NULL", nil
+		return p.handleNull()
 	} else {
 		err := errors.New("invalid code given")
 		return "", err
@@ -75,4 +73,14 @@ func (p *IntColumnParser) handleStatic() (string, error) {
 		value = r
 	}
 	return value, err
+}
+
+func (p *IntColumnParser) handleSeq() (string, error) {
+	l := p.latest // get the latest
+	p.latest++    // increment
+	return strconv.Itoa(l), nil
+}
+
+func (p *IntColumnParser) handleNull() (string, error) {
+	return "NULL", nil
 }
