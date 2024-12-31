@@ -93,16 +93,15 @@ func GetTableMap() map[string]int {
 	return allNames
 }
 
-func GetColumnMap(tableName string) map[string]map[string]string {
-	m := make(map[string]map[string]string)             // make initial map
+func GetColumnMap(tableName string) map[string]string {
+	m := make(map[string]string)                        // make initial map
 	tcols, err := schema.ColumnTypes(db, "", tableName) // get the column info
 	if err != nil {
 		log.Fatal(err)
 		return nil
 	}
-	m[tableName] = map[string]string{} // initiate empty inner map
 	for i := range tcols {
-		m[tableName][tcols[i].Name()] = typeMap[tcols[i].DatabaseTypeName()] // map the column name to it's type
+		m[tcols[i].Name()] = typeMap[tcols[i].DatabaseTypeName()] // map the column name to it's type
 	}
 	return m
 }
