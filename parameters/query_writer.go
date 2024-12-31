@@ -9,11 +9,12 @@ import (
 )
 
 type QueryWriter struct {
-	AllRelations    map[string]map[string]map[string]string
-	LevelMap        map[string]int
-	pkMap           map[string]int
-	TableOrderQueue *list.List // queue
-	QueryQueue      *list.List // queue
+	AllRelations     map[string]map[string]map[string]string
+	LevelMap         map[string]int
+	pkMap            map[string]int
+	TableOrderQueue  *list.List // queue
+	InsertQueryQueue *list.List // queue
+	DeleteQueryQueue *list.List // queue
 }
 
 func createTable(tableName string) table {
@@ -30,10 +31,25 @@ func createTable(tableName string) table {
 	return t
 }
 
+func appendValues(colStringPtr *string, valStringPtr *string, newColumn string, newVal string) {
+	if *colStringPtr == "(" {
+		*colStringPtr = *colStringPtr + newColumn
+	} else {
+		*colStringPtr = *colStringPtr + "," + newColumn
+	}
+
+	if *valStringPtr == "(" {
+		*valStringPtr = *valStringPtr + newVal
+	} else {
+		*valStringPtr = *valStringPtr + "," + newVal
+	}
+
+}
+
 func (qw *QueryWriter) CreateTableOrder() {
 	l := list.New()
 	tnames := make([]string, len(qw.LevelMap))
-	for key, _ := range qw.LevelMap {
+	for key := range qw.LevelMap {
 		tnames = append(tnames, key)
 	}
 	// sort in descending order
@@ -54,6 +70,8 @@ func (qw *QueryWriter) ProcessTables() {
 
 func (qw *QueryWriter) ProcessTable() {
 	//var writer SQLWriter
+	colString := "("
+	colValString := "("
 	tableName := qw.TableOrderQueue.Front().Value.(string)
 	t := createTable(tableName)
 	for _, col := range t.Columns {
@@ -61,7 +79,11 @@ func (qw *QueryWriter) ProcessTable() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println(colVal)
+		appendValues(&colString, &colValString, col.ColumnName, colVal)
 	}
-	qw.TableOrderQueue.Remove(qw.QueryQueue.Front()) // remove the first in the queue
+	colString = colString + ")"
+	colValString = colValString + ")"
+	query := fmt.Sprintf("INSERT INTO %s %s VALUES %s", t.TableName, colString, colValString)
+	qw.InsertQueryQueue.PushBack(query)
+	qw.TableOrderQueue.Remove(qw.TableOrderQueue.Front()) // remove the first in the queue
 }
