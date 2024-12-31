@@ -14,6 +14,7 @@ type QueryWriter struct {
 	AllRelations     map[string]map[string]map[string]string
 	LevelMap         map[string]int
 	pkMap            map[string]string
+	fkMap            map[string]map[string]string
 	TableOrderQueue  *list.List // queue
 	InsertQueryQueue *list.List // queue
 	DeleteQueryQueue *list.List // queue
@@ -29,11 +30,28 @@ func (qw *QueryWriter) Init() error {
 		return err
 	}
 	qw.pkMap = db.GetTablePKMap()
+	qw.SetFKMap()
 	qw.TableOrderQueue = list.New()
 	qw.InsertQueryQueue = list.New()
 	qw.DeleteQueryQueue = list.New()
 	return err
 }
+
+func (qw *QueryWriter) SetFKMap() {
+	m := make(map[string]map[string]string)
+	for _, relations := range qw.AllRelations {
+		for _, relation := range relations {
+			r, ok := m[relation["Table"]]
+			if !ok {
+				m[relation["Table"]] = map[string]string{relation["Column"]: ""}
+			} else {
+				r[relation["Column"]] = ""
+			}
+		}
+	}
+	qw.fkMap = m
+}
+
 func (qw *QueryWriter) CreateTableOrder() {
 	l := list.New()
 	tnames := make([]string, 0, len(qw.LevelMap))
@@ -63,11 +81,21 @@ func (qw *QueryWriter) ProcessTable() {
 	tableName := qw.TableOrderQueue.Front().Value.(string)
 	t := createTable(tableName)
 	for _, col := range t.Columns {
-		colVal, err := col.Parser.ParseColumn()
-		if err != nil {
-			log.Fatal(err)
+		fkRelation, fk := qw.AllRelations[tableName][col.ColumnName]
+		if fk {
+			colVal := qw.fkMap[fkRelation["Table"]][fkRelation["Column"]] // retrieve the stored foreign key value
+			appendValues(&colString, &colValString, col.ColumnName, colVal)
+		} else {
+			colVal, err := col.Parser.ParseColumn()
+			if err != nil {
+				log.Fatal(err)
+			}
+			_, isFK := qw.fkMap[tableName][col.ColumnName]
+			if isFK {
+				qw.fkMap[tableName][col.ColumnName] = colVal
+			}
+			appendValues(&colString, &colValString, col.ColumnName, colVal)
 		}
-		appendValues(&colString, &colValString, col.ColumnName, colVal)
 	}
 	colString = colString + ")"
 	colValString = colValString + ")"
@@ -103,5 +131,4 @@ func appendValues(colStringPtr *string, valStringPtr *string, newColumn string, 
 	} else {
 		*valStringPtr = *valStringPtr + "," + newVal
 	}
-
 }
