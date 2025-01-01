@@ -2,20 +2,19 @@ package parameters
 
 // ENUMS that will be used to generate SQL strings
 const (
-	RANDOM = iota
+	RANDOM = iota + 1
 	STATIC
 	SEQ
 	UUID
-	BOOL
+	REGEX
+	EMAIL
 	FIRSTNAME
 	LASTNAME
 	FULLNAME
+	PHONE
+	COUNTRY
 	ADDRESS
-	REGEX
-	EMAIL
+	ZIPCODE
+	CITY
 	NULL
 )
-
-var defaultRegex = map[string]string{
-	"EMAIL": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
-}

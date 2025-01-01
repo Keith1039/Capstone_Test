@@ -5,7 +5,10 @@ type ColumnParser interface {
 }
 
 var parserMap = map[string]ColumnParser{
-	"INT": &IntColumnParser{},
+	"INT":     &IntColumnParser{},
+	"VARCHAR": &VarcharColumnParser{},
+	"UUID":    &UUIDParser{},
+	"BOOL":    &BooleanParser{},
 }
 
 func getColumnParser(dataType string) ColumnParser {

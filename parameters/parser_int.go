@@ -7,16 +7,20 @@ import (
 	"strings"
 )
 
+const DEFAULTRANGE = "0,100"
+const DEFAULTSTATIC = "0"
+const DEFAULTINTCODE = RANDOM
+
 type IntColumnParser struct {
 	Column column
 	latest int
 }
 
-const DEFAULTRANGE = "0,100"
-const DEFAULTSTATIC = "0"
-
 func (p *IntColumnParser) ParseColumn() (string, error) {
 	code := p.Column.Code
+	if code == 0 {
+		code = DEFAULTINTCODE
+	}
 	if code == RANDOM {
 		return p.handleRandomCode()
 	} else if code == STATIC {
