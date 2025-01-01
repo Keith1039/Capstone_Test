@@ -17,4 +17,5 @@ const (
 	ZIPCODE
 	CITY
 	NULL
+	NOW
 )
