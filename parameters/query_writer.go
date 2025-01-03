@@ -101,7 +101,6 @@ func (qw *QueryWriter) ProcessTable() {
 	colValString = colValString + ")"
 	query := fmt.Sprintf("INSERT INTO %s %s VALUES %s;", t.TableName, colString, colValString)
 	qw.InsertQueryQueue.PushBack(query)
-	fmt.Println(query)
 	qw.TableOrderQueue.Remove(qw.TableOrderQueue.Front()) // remove the first in the queue
 }
 

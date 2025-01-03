@@ -77,7 +77,7 @@
       "FK": false,
       "Code": "REGEX",
       "Info": {
-        "expression": "[a-z]+"
+        "Expression": "[a-z]+"
       }
     }
   }
