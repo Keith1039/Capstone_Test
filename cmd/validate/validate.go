@@ -5,11 +5,6 @@ package validate
 
 import (
 	"github.com/spf13/cobra"
-	"log"
-)
-
-var (
-	dbURL string
 )
 
 // validateCmd represents the validate command
@@ -25,11 +20,7 @@ var ValidateCmd = &cobra.Command{
 
 func init() {
 	ValidateCmd.AddCommand(schemaCmd)
-	schemaCmd.PersistentFlags().StringVarP(&dbURL, "database", "d", "", "url to connect to the database with")
 
-	if err := schemaCmd.MarkPersistentFlagRequired("database"); err != nil {
-		log.Fatal(err)
-	}
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command

@@ -4,8 +4,8 @@ Copyright © 2025 Keith Compere <KeithCompere150@gmail.com>
 package validate
 
 import (
-	"database/sql"
 	"fmt"
+	cmd2 "github.com/Keith1039/Capstone_Test/cmd"
 	database "github.com/Keith1039/Capstone_Test/db"
 	"github.com/Keith1039/Capstone_Test/graph"
 	"github.com/spf13/cobra"
@@ -23,7 +23,7 @@ var schemaCmd = &cobra.Command{
 	Short: "command used to validate the entire schema",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		db, err := sql.Open("postgres", dbURL)
+		db, err := cmd2.InitDB(cmd2.ConnString)
 		if err != nil {
 			log.Fatal(err)
 		}
