@@ -4,7 +4,13 @@ Copyright © 2025 Keith Compere <KeithCompere150@gmail.com>
 package validate
 
 import (
+	"database/sql"
 	"github.com/spf13/cobra"
+	"log"
+)
+
+var (
+	ConnString string
 )
 
 // validateCmd represents the validate command
@@ -20,6 +26,11 @@ var ValidateCmd = &cobra.Command{
 
 func init() {
 	ValidateCmd.AddCommand(schemaCmd)
+	ValidateCmd.PersistentFlags().StringVarP(&ConnString, "database", "", "", "url to connect to the database with")
+
+	if err := ValidateCmd.MarkPersistentFlagRequired("database"); err != nil {
+		log.Fatal(err)
+	}
 
 	// Here you will define your flags and configuration settings.
 
@@ -30,4 +41,12 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// validateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}
+
+func InitDB() (*sql.DB, error) {
+	db, err := sql.Open("postgres", ConnString)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return db, nil
 }

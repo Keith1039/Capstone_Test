@@ -5,7 +5,6 @@ package validate
 
 import (
 	"fmt"
-	cmd2 "github.com/Keith1039/Capstone_Test/cmd"
 	database "github.com/Keith1039/Capstone_Test/db"
 	"github.com/Keith1039/Capstone_Test/graph"
 	"github.com/spf13/cobra"
@@ -23,7 +22,7 @@ var schemaCmd = &cobra.Command{
 	Short: "command used to validate the entire schema",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		db, err := cmd2.InitDB(cmd2.ConnString)
+		db, err := InitDB()
 		if err != nil {
 			log.Fatal(err)
 		}

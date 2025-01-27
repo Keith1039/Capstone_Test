@@ -4,11 +4,17 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package generate
 
 import (
+	"database/sql"
 	"github.com/spf13/cobra"
+	"log"
 )
 
-// generateCmd represents the generate command
-var generateCmd = &cobra.Command{
+var (
+	ConnString string
+)
+
+// GenerateCmd represents the generate command
+var GenerateCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
@@ -24,6 +30,12 @@ to quickly create a Cobra application.`,
 
 func init() {
 
+	GenerateCmd.PersistentFlags().StringVarP(&ConnString, "database", "", "", "url to connect to the database with")
+
+	if err := GenerateCmd.MarkPersistentFlagRequired("database"); err != nil {
+		log.Fatal(err)
+	}
+	GenerateCmd.AddCommand(templateCmd)
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
@@ -33,4 +45,12 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// generateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}
+
+func InitDB() (*sql.DB, error) {
+	db, err := sql.Open("postgres", ConnString)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return db, nil
 }

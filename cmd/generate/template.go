@@ -8,7 +8,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	cmd2 "github.com/Keith1039/Capstone_Test/cmd"
 	"github.com/Keith1039/Capstone_Test/graph"
 	"github.com/jimsmart/schema"
 	"github.com/spf13/cobra"
@@ -27,7 +26,7 @@ var templateCmd = &cobra.Command{
 	Short: "generates a template in a specific folder for a specific group of tables",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		db, err := cmd2.InitDB(cmd2.ConnString)
+		db, err := InitDB()
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -55,8 +54,8 @@ var templateCmd = &cobra.Command{
 
 func init() {
 
-	templateCmd.Flags().StringVarP(&dirPath, "dir", "d", "", "relative path of a directory to place the template file in, if the path doesn't exist it will make the folder")
-	templateCmd.Flags().StringVarP(&table, "table", "t", "", "the name of the table we want an entry for")
+	templateCmd.Flags().StringVarP(&dirPath, "dir", "", "", "relative path of a directory to place the template file in, if the path doesn't exist it will make the folder")
+	templateCmd.Flags().StringVarP(&table, "table", "", "", "the name of the table we want an entry for")
 
 	err := templateCmd.MarkFlagRequired("dir")
 	if err != nil {

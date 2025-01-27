@@ -4,16 +4,11 @@ Copyright © 2025 Keith Compere <KeithCompere150@gmail.com>
 package cmd
 
 import (
-	"database/sql"
+	"github.com/Keith1039/Capstone_Test/cmd/generate"
 	"github.com/Keith1039/Capstone_Test/cmd/validate"
-	"log"
 	"os"
 
 	"github.com/spf13/cobra"
-)
-
-var (
-	ConnString string
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -39,6 +34,7 @@ func Execute() {
 
 func addSubCommandPalettes() {
 	rootCmd.AddCommand(validate.ValidateCmd)
+	rootCmd.AddCommand(generate.GenerateCmd)
 }
 
 func init() {
@@ -51,18 +47,6 @@ func init() {
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	rootCmd.PersistentFlags().StringVarP(&ConnString, "database", "d", "", "url to connect to the database with")
 
-	if err := rootCmd.MarkPersistentFlagRequired("database"); err != nil {
-		log.Fatal(err)
-	}
 	addSubCommandPalettes()
-}
-
-func InitDB(dbString string) (*sql.DB, error) {
-	db, err := sql.Open("postgres", ConnString)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return db, nil
 }
