@@ -28,6 +28,11 @@ to quickly create a Cobra application.`,
 	},
 }
 
+func addSubCommands() {
+	GenerateCmd.AddCommand(templateCmd)
+	GenerateCmd.AddCommand(entryCmd)
+}
+
 func init() {
 
 	GenerateCmd.PersistentFlags().StringVarP(&ConnString, "database", "", "", "url to connect to the database with")
@@ -35,7 +40,7 @@ func init() {
 	if err := GenerateCmd.MarkPersistentFlagRequired("database"); err != nil {
 		log.Fatal(err)
 	}
-	GenerateCmd.AddCommand(templateCmd)
+	addSubCommands()
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command

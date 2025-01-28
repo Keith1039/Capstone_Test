@@ -13,11 +13,12 @@ import (
 	"github.com/spf13/cobra"
 	"log"
 	"os"
+	"strings"
 )
 
 var (
-	dirPath string
-	table   string
+	dirPath   string
+	tableName string
 )
 
 // templateCmd represents the template command
@@ -32,19 +33,19 @@ var templateCmd = &cobra.Command{
 		}
 		ordering := graph.NewOrdering(db)
 
-		tableOrder, err := ordering.GetOrder(table)
+		tableOrder, err := ordering.GetOrder(strings.ToLower(tableName))
 		if err != nil {
 			log.Fatal(err)
 		}
 		templates := makeTemplates(db, tableOrder)
 		jsonString, err := json.MarshalIndent(templates, "", "  ")
 		if _, err := os.Stat(dirPath); os.IsNotExist(err) {
-			err = os.Mkdir(dirPath, os.ModePerm)
+			err = os.MkdirAll(dirPath, os.ModePerm)
 			if err != nil {
 				log.Fatal(err)
 			}
 		}
-		err = os.WriteFile(fmt.Sprintf("%s_path_template.json", table), jsonString, os.ModePerm)
+		err = os.WriteFile(fmt.Sprintf("%s/%s_template.json", dirPath, table), jsonString, os.ModePerm)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -55,7 +56,7 @@ var templateCmd = &cobra.Command{
 func init() {
 
 	templateCmd.Flags().StringVarP(&dirPath, "dir", "", "", "relative path of a directory to place the template file in, if the path doesn't exist it will make the folder")
-	templateCmd.Flags().StringVarP(&table, "table", "", "", "the name of the table we want an entry for")
+	templateCmd.Flags().StringVarP(&tableName, "table", "", "", "the name of the table we want an entry for")
 
 	err := templateCmd.MarkFlagRequired("dir")
 	if err != nil {
@@ -81,16 +82,16 @@ func makeTemplates(db *sql.DB, l *list.List) map[string]map[string]map[string]st
 
 	node := l.Front()
 	for node != nil {
-		tableName := node.Value.(string)
-		m[table] = makeTemplate(db, tableName)
+		tName := node.Value.(string)
+		m[table] = makeTemplate(db, tName)
 		node = node.Next()
 	}
 	return m
 }
 
-func makeTemplate(db *sql.DB, tableName string) map[string]map[string]string {
+func makeTemplate(db *sql.DB, tName string) map[string]map[string]string {
 	m := make(map[string]map[string]string)
-	cols, err := schema.ColumnTypes(db, "", tableName)
+	cols, err := schema.ColumnTypes(db, "", tName)
 	if err != nil {
 		log.Fatal(err)
 	}
