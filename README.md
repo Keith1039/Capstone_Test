@@ -7,19 +7,24 @@ __[CLI Documentation](cmd/README.md)__
 __[Go Documentation]()__
 
 ## Main Offering
-This project provides tools to help a fledgling database mature quickly while allowing the developer to side step
-hours of planning. This tool is intended for use in a new PERSONAL project or during a high speed race to get a functional 
-product out  like in a hackathon. Please don't use this in prod...
+This project provides tools to help a fledgling database mature quickly. This allows the developer to side step
+hours of planning. This tool is intended for use in a new PERSONAL project or for helping in create a proof of concept. 
+Please don't use this in prod...
 
 ### Validation
 The validation provided by DBVG is cycle aversion as well as cycle resolution. As databases grow, it becomes incredibly easy to 
-accidentally create cyclic relationships between tables without noticing. This can be averted with proper planning but sometimes
-the situation is out of your hands, and you need to move fast and break things.
+accidentally create cyclic relationships between tables. This can be averted with proper planning but in cases
+where time is limited, this cannot be done.
 
 ### Data Generation
-As a database grows it also becomes harder to generate data for it as you manage the complex web of relationships you've 
-constructed. This problem is further compounded when you're actively making changes to the database schema. With this library,
-you can generate test data on the fly with no worries, let the code handle the hard work.
+As a database grows it also becomes harder to generate data for it as you manage the complex web of relationships. 
+While real data is better for testing, in a product that has yet to be released this isn't feasible.
+Oftentimes, the solution is to create a script that executes the set of queries needed to generate 
+database entries. This solution however, is inflexible and requires constant maintenance.
+
+This problem is further compounded when you're actively making changes to the database schema. 
+This causes even more time loss. With this library, you can generate test data on the fly with no worries. 
+Let the code handle the hard work.
 
 ## Basic Usage (As a library)
 
